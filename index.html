@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SDDEC26-06 | VIS–NIR Spectrometer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cardinal: #C8102E;
+      --gold: #F1BE48;
+      --dark: #1a1a2e;
+      --mid: #16213e;
+      --light-bg: #f8f9fa;
+      --text: #2d2d2d;
+      --muted: #6c757d;
+      --card-bg: #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: var(--light-bg);
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(26, 26, 46, 0.95);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.9rem 2.5rem;
+      border-bottom: 2px solid var(--cardinal);
+    }
+
+    .nav-brand {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #fff;
+      letter-spacing: 0.04em;
+    }
+
+    .nav-brand span { color: var(--gold); }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav ul a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    nav ul a:hover { color: var(--gold); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--dark) 0%, var(--mid) 60%, #0f3460 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 60% 40%, rgba(200,16,46,0.15) 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 80%, rgba(241,190,72,0.1) 0%, transparent 50%);
+    }
+
+    .hero-badge {
+      position: relative;
+      display: inline-block;
+      background: rgba(200,16,46,0.2);
+      border: 1px solid var(--cardinal);
+      color: var(--gold);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.4rem 1.1rem;
+      border-radius: 50px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      position: relative;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      color: #fff;
+      max-width: 860px;
+      line-height: 1.2;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      position: relative;
+      color: rgba(255,255,255,0.65);
+      font-size: 1.05rem;
+      max-width: 560px;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-pills {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    .pill {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.85);
+      font-size: 0.8rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 50px;
+    }
+
+    .hero-scroll {
+      position: relative;
+      color: rgba(255,255,255,0.35);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* SECTIONS */
+    section {
+      padding: 5rem 2rem;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--cardinal);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 1rem;
+    }
+
+    .section-title span { color: var(--cardinal); }
+
+    .section-intro {
+      color: var(--muted);
+      max-width: 680px;
+      font-size: 1.05rem;
+      margin-bottom: 3rem;
+    }
+
+    /* ABOUT */
+    #about { background: #fff; }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .about-text p {
+      color: #444;
+      margin-bottom: 1.1rem;
+      font-size: 1rem;
+    }
+
+    .about-specs {
+      background: var(--light-bg);
+      border-radius: 14px;
+      padding: 1.8rem;
+      border-left: 4px solid var(--cardinal);
+    }
+
+    .about-specs h3 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cardinal);
+      margin-bottom: 1.2rem;
+    }
+
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid #e9ecef;
+      font-size: 0.9rem;
+    }
+
+    .spec-row:last-child { border-bottom: none; }
+    .spec-key { color: var(--muted); font-weight: 500; }
+    .spec-val { font-weight: 700; color: var(--dark); }
+
+    /* FEATURES */
+    #features { background: var(--light-bg); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 1.8rem;
+      border: 1px solid #e9ecef;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--cardinal), #e63950);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+
+    .feature-card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* DELIVERABLES */
+    #deliverables { background: #fff; }
+
+    .phases {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .phase {
+      background: var(--light-bg);
+      border-radius: 14px;
+      padding: 2rem;
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .phase-num {
+      width: 38px;
+      height: 38px;
+      background: var(--cardinal);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .phase h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .phase ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .phase ul li {
+      display: flex;
+      gap: 0.7rem;
+      align-items: flex-start;
+      font-size: 0.9rem;
+      color: #444;
+    }
+
+    .phase ul li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--cardinal);
+      border-radius: 50%;
+      margin-top: 0.45rem;
+      flex-shrink: 0;
+    }
+
+    /* DOCUMENTS */
+    #documents { background: var(--light-bg); }
+
+    .docs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .doc-group {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 2rem;
+      border: 1px solid #e9ecef;
+    }
+
+    .doc-group h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--cardinal);
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    .doc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .doc-list li a {
+      color: var(--cardinal);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .doc-list li a:hover { color: var(--gold); }
+
+    /* TEAM */
+    #team { background: var(--dark); }
+    #team .section-label { color: var(--gold); }
+    #team .section-title { color: #fff; }
+    #team .section-title span { color: var(--gold); }
+    #team .section-intro { color: rgba(255,255,255,0.5); }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .team-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .team-card:hover {
+      background: rgba(255,255,255,0.09);
+      transform: translateY(-4px);
+    }
+
+    .avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--cardinal), #e63950);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 auto 1rem;
+      border: 3px solid rgba(241,190,72,0.3);
+    }
+
+    .team-card h3 {
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+
+    .team-card p {
+      color: var(--gold);
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    /* ADVISOR */
+    .advisor-strip {
+      margin-top: 3rem;
+      background: rgba(241,190,72,0.08);
+      border: 1px solid rgba(241,190,72,0.2);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .advisor-strip .label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    .advisor-strip .names {
+      color: rgba(255,255,255,0.85);
+      font-size: 0.95rem;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #0d0d1a;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.82rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    footer strong { color: rgba(255,255,255,0.7); }
+
+    /* RESPONSIVE */
+    @media (max-width: 720px) {
+      nav ul { display: none; }
+      .about-grid, .phases, .docs-grid { grid-template-columns: 1fr; }
+      nav { padding: 0.9rem 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-brand"><span>SDDEC</span>26-06</div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#features">Technical</a></li>
+      <li><a href="#deliverables">Deliverables</a></li>
+      <li><a href="#documents">Documents</a></li>
+      <li><a href="#team">Team</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-badge">Iowa State University &mdash; ECpE Senior Design</div>
+    <h1>Cost-Effective <em>VIS&ndash;NIR Spectrometer</em> Using a Linear CCD Sensor</h1>
+    <p class="hero-sub">A portable, microcontroller-based spectrometer for optical characterization, photoacoustic imaging support, and biomedical research.</p>
+    <div class="hero-pills">
+      <span class="pill">400&ndash;1000 nm</span>
+      <span class="pill">STM32 Microcontroller</span>
+      <span class="pill">TCD1304DG CCD</span>
+      <span class="pill">Embedded Systems</span>
+      <span class="pill">Analog Front-End</span>
+      <span class="pill">Photoacoustic Imaging</span>
+    </div>
+    <div class="hero-scroll">&#8595; Scroll to explore</div>
+  </section>
+
+  <section id="about">
+    <div class="container">
+      <div class="section-label">Project Overview</div>
+      <h2 class="section-title">What We're <span>Building</span></h2>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            This senior design project focuses on designing, building, and validating a compact and affordable
+            visible&ndash;near infrared (VIS&ndash;NIR) spectrometer capable of measuring spectral content of light
+            across approximately 400&ndash;1000 nm.
+          </p>
+          <p>
+            The system is built around the <strong>TCD1304DG 3648-pixel linear CCD sensor</strong> for spectral
+            detection, driven by an <strong>STM32 microcontroller</strong> for precise timing, signal acquisition,
+            and data handling.
+          </p>
+          <p>
+            A primary application is supporting <strong>photoacoustic imaging (PAI)</strong> research by accurately
+            measuring the center wavelength and full width at half maximum (FWHM) of high-power LEDs and laser
+            diodes used for photoacoustic excitation&mdash;critical for spectral unmixing and quantitative imaging.
+          </p>
+          <p>
+            Conventional spectrometers are expensive and bulky. Our design emphasizes <strong>low cost, portability,
+            modularity, and ease of use</strong> without sacrificing spectral performance, making it suitable for
+            teaching labs and biomedical optics research alike.
+          </p>
+        </div>
+        <div class="about-specs">
+          <h3>Target Specifications</h3>
+          <div class="spec-row">
+            <span class="spec-key">Wavelength Range</span>
+            <span class="spec-val">400&ndash;1000 nm</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Spectral Resolution</span>
+            <span class="spec-val">~1&ndash;5 nm</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Detector</span>
+            <span class="spec-val">TCD1304DG (3648 px)</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">ADC Resolution</span>
+            <span class="spec-val">10&ndash;12 bit</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Frame Rate</span>
+            <span class="spec-val">&ge; 10 FPS</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Interface</span>
+            <span class="spec-val">USB / UART</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Power Supply</span>
+            <span class="spec-val">USB or Battery (5V / 3.3V)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="container">
+      <div class="section-label">Technical Approach</div>
+      <h2 class="section-title">System <span>Architecture</span></h2>
+      <p class="section-intro">The spectrometer integrates four key subsystems to deliver accurate, real-time spectral measurements in a portable form factor.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">&#128302;</div>
+          <h3>Optical Subsystem</h3>
+          <p>Entrance slit, collimating optics, diffraction grating, and focusing optics arranged to disperse incident light onto the linear CCD sensor.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#9883;</div>
+          <h3>Analog Front-End</h3>
+          <p>Dedicated transimpedance amplifier (TIA), DC offset adjustment, and low-pass filtering to maximize signal-to-noise ratio before ADC conversion.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#128187;</div>
+          <h3>Embedded Firmware</h3>
+          <p>STM32 firmware manages precise CCD timing using hardware timers and DMA, ADC acquisition, data buffering, and host communication.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#128200;</div>
+          <h3>PC Software Interface</h3>
+          <p>LabVIEW or MATLAB graphical interface for real-time spectral intensity visualization, data storage, and wavelength calibration workflows.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#9878;</div>
+          <h3>PCB & Enclosure</h3>
+          <p>Compact PCB using surface-mount components with careful grounding and noise mitigation. 3D-printed mechanical enclosure for portability.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#128269;</div>
+          <h3>Wavelength Calibration</h3>
+          <p>Calibration using narrow-line lasers or calibrated LEDs to map CCD pixels to wavelengths, validated against spectral accuracy targets.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="deliverables">
+    <div class="container">
+      <div class="section-label">Project Timeline</div>
+      <h2 class="section-title">Expected <span>Deliverables</span></h2>
+      <p class="section-intro">The project spans two semesters, progressing from design and prototyping to full integration and validation.</p>
+      <div class="phases">
+        <div class="phase">
+          <div class="phase-header">
+            <div class="phase-num">1</div>
+            <h3>Semester 1 &mdash; Design & Prototype</h3>
+          </div>
+          <ul>
+            <li>Detailed project plan, milestones, and risk analysis</li>
+            <li>Optical layout design and component selection</li>
+            <li>STM32 microcontroller and CCD interface architecture selection</li>
+            <li>CCD timing and readout firmware implementation</li>
+            <li>Analog front-end circuit design and simulation</li>
+            <li>PCB schematic capture, layout, fabrication, and assembly</li>
+            <li>Initial CCD verification and preliminary spectral measurements</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <div class="phase-header">
+            <div class="phase-num">2</div>
+            <h3>Semester 2 &mdash; Integration & Validation</h3>
+          </div>
+          <ul>
+            <li>Signal-to-noise ratio and timing stability improvements</li>
+            <li>Firmware optimization for reliable acquisition</li>
+            <li>Full integration of optical, electronic, and firmware subsystems</li>
+            <li>3D-printed mechanical enclosure for portable operation</li>
+            <li>User-friendly graphical interface for spectral visualization</li>
+            <li>Wavelength calibration with known reference sources</li>
+            <li>Performance validation and final oral presentation with live demo</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="documents">
+    <div class="container">
+      <div class="section-label">Project Files</div>
+      <h2 class="section-title">Semester 1 <span>Documents</span></h2>
+      <p class="section-intro">Access weekly progress reports and formal design documentation.</p>
+      <div class="docs-grid">
+        <div class="doc-group">
+          <h3>Weekly Reports</h3>
+          <ul class="doc-list">
+            <li><a href="#">Report 1</a></li>
+            <li><a href="#">Report 2</a></li>
+            <li><a href="#">Report 3</a></li>
+            <li><a href="#">Report 4</a></li>
+            <li><a href="#">Report 5</a></li>
+            <li><a href="#">Report 6</a></li>
+            <li><a href="#">Report 7</a></li>
+            <li><a href="#">Report 8</a></li>
+            <li><a href="#">Report 9</a></li>
+            <li><a href="#">Report 10</a></li>
+          </ul>
+        </div>
+        <div class="doc-group">
+          <h3>Design Documents</h3>
+          <ul class="doc-list">
+            <li><a href="#">Final 491 Design Doc</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="team">
+    <div class="container">
+      <div class="section-label">The Team</div>
+      <h2 class="section-title">Meet the <span>Engineers</span></h2>
+      <p class="section-intro">A team of Electrical Engineering seniors from Iowa State University bringing this spectrometer to life.</p>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="avatar">SG</div>
+          <h3>Samar Gill</h3>
+          <p>Electrical Engineering</p>
+        </div>
+        <div class="team-card">
+          <div class="avatar">DP</div>
+          <h3>Dawson Posekany</h3>
+          <p>Electrical Engineering</p>
+        </div>
+        <div class="team-card">
+          <div class="avatar">RM</div>
+          <h3>Ryan Majstorovic</h3>
+          <p>Electrical Engineering</p>
+        </div>
+        <div class="team-card">
+          <div class="avatar">ET</div>
+          <h3>Evan Tamer</h3>
+          <p>Electrical Engineering</p>
+        </div>
+      </div>
+      <div class="advisor-strip">
+        <span class="label">Faculty Advisor</span>
+        <span class="names">Manojit Pramanik &mdash; Iowa State University, ECpE</span>
+        <span class="label" style="margin-left:auto;">Project Client</span>
+        <span class="names">Avishek Das &mdash; avishek@iastate.edu</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>SDDEC26-06</strong> &mdash; Development of a Cost-Effective, Microcontroller-Based Portable VIS&ndash;NIR Spectrometer Using a Linear CCD Sensor</p>
+    <p style="margin-top:0.4rem;">Iowa State University &bull; Department of Electrical and Computer Engineering</p>
+  </footer>
+
+</body>
+</html>
